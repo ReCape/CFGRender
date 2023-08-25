@@ -132,15 +132,18 @@ var renderer;
 var controls;
 
 // Generates the scene
-function createScene() {
+function createScene(width=0.6) {
+    var sceneSize = [window.innerWidth * width, window.innerHeight]
+
     scene = new THREE.Scene();
-    camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
+    camera = new THREE.PerspectiveCamera(60, sceneSize[0] / sceneSize[1], 1, 1000);
     camera.position.set(2, 5, 10);
     renderer = new THREE.WebGLRenderer({
         antialias: true,
         alpha: true
     });
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setSize(sceneSize[0], sceneSize[1]);
+    renderer.domElement.classList.add("cfgviewer");
     document.body.appendChild(renderer.domElement);
 
     const light = new THREE.HemisphereLight(0xffffff, 0x999999, 2)
@@ -152,6 +155,17 @@ function createScene() {
     camera.rotateY(0.5);
     camera.rotateZ(0.5);
     camera.position.set(27, 40, 20)
+
+    window.addEventListener( 'resize', onWindowResize, false );
+
+    function onWindowResize(){
+        var sceneSize = [window.innerWidth * 0.6, window.innerHeight]
+        camera.aspect = sceneSize[0] / sceneSize[1];
+        camera.updateProjectionMatrix();
+
+        renderer.setSize( sceneSize[0], sceneSize[1] );
+
+    }
 
     render();
 }
